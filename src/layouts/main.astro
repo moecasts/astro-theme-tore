@@ -1,0 +1,43 @@
+---
+import { ClientRouter, fade } from 'astro:transitions';
+import { getLocalizedPathname } from 'astro-react-i18next/utils';
+import { SEO } from 'astro-seo';
+import i18n from 'i18next';
+import { FAB } from '@/components/hoc/fab';
+import { getThemeConfig } from '@/config';
+import { generateSEOProps } from '@/lib/seo';
+
+import '../styles/global.css';
+
+const { content } = Astro.props;
+const config = getThemeConfig(i18n.language);
+
+// SEO configuration
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const rssLink = new URL(getLocalizedPathname('/rss.xml', i18n.language), Astro.site).toString();
+
+// Generate SEO props (includes language alternates)
+const seoProps = generateSEOProps({
+  content,
+  config,
+  locale: i18n.language,
+  canonicalUrl,
+  siteUrl: Astro.site!,
+  i18n,
+});
+---
+
+<html lang={i18n.language} transition:name="root" transition:animate={fade({ duration: '0.05s' })}>
+  <head>
+    <ClientRouter />
+    <meta name="viewport" content="width=device-width" />
+    <SEO {...seoProps} />
+    <link rel="alternate" type="application/rss+xml" title={config.site?.title} href={rssLink} />
+    <script is:inline src="/scripts/setup-theme.js"></script>
+  </head>
+  <body>
+    <slot />
+
+    <FAB client:idle />
+  </body>
+</html>
