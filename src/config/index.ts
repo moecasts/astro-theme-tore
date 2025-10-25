@@ -291,4 +291,11 @@ defineConfig({
     orderBy: '-date',
     prefix: 'page',
   },
+
+  /**
+   * Filter config
+   */
+  filter: {
+    column: 'filters',
+  },
 });
